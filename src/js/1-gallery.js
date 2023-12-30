@@ -63,9 +63,17 @@ const images = [
     description: 'Lighthouse Coast Sea',
   },
 ];
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.css';
 
 const contGallery = document.querySelector('.gallery');
 contGallery.innerHTML = createMarkup(images);
+
+const gallery = new SimpleLightbox('.gallery-item a', {
+  captionsData: 'alt',
+  captionDelay: 250,
+});
+
 function createMarkup(image) {
   return image
     .map(
@@ -74,55 +82,10 @@ function createMarkup(image) {
         <img
           class="gallery-image"
           src="${preview}"
-          data-source="${original}"
           alt="${description}"
         />
       </a>
     </li>`
     )
     .join('');
-}
-
-contGallery.addEventListener('click', handleGalleryClick);
-
-function handleGalleryClick(event) {
-  event.preventDefault();
-
-  if (event.target === event.currentTarget) {
-    return;
-  }
-  const original = event.target.dataset.source;
-  const description = event.target.dataset.description;
-
-  const instance = basicLightbox.create(
-    `
-      <div class="modal">
-          <img
-          class="modal-image"
-          src="${original}"
-          alt="${description}"
-        />
-    </div>
-  `,
-    {
-      onShow: instance => {
-        document.addEventListener('keydown', closeModalKey);
-      },
-      onClose: instance => {
-        document.removeEventListener('keydown', closeModalKey);
-      },
-    }
-  );
-  instance.show();
-
-  function closeModalKey(event) {
-    if (event.code === 'Escape' && instance) {
-      instance.close();
-    }
-  }
-  const modalImage = instance.element().querySelector('.modal-image');
-
-  modalImage.addEventListener('click', () => {
-    instance.close();
-  });
 }
